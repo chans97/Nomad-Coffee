@@ -1,17 +1,28 @@
 require("dotenv").config();
 
-import { ApolloServer } from "apollo-server";
+import express from "express";
+import logger from "morgan";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
-import schema from "./schema";
+import { typeDefs, resolvers } from "./schema";
+import { getUser, protectResolver } from "./users/users.utils";
+import { ApolloServer } from "apollo-server-express";
 
-const server = new ApolloServer({
-  schema,
+const PORT = process.env.PORT;
+const apollo = new ApolloServer({
+  resolvers,
+  typeDefs,
+  context: async ({ req }) => {
+    return { loggedInUser: await getUser(req.headers.token), protectResolver };
+  },
   // GraphQLPlayground 를 바로 사용하기 위함
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 
-const PORT = process.env.PORT;
+const app = express();
+app.use(logger("tiny"));
+app.use("/static", express.static("uploads"));
+apollo.applyMiddleware({ app });
 
-server.listen(PORT).then(({ url }) => {
-  console.log(`go to ${url}`);
+app.listen({ port: PORT }, () => {
+  console.log(`go to http://localhost:${PORT}`);
 });
