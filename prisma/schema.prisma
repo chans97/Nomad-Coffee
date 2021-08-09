@@ -19,6 +19,8 @@ model User {
   location       String?
   avatarURL      String?
   githubUsername String?
+  followers      User[]   @relation("FolloweRelaton", references: [id])
+  followings     User[]   @relation("FolloweRelaton", references: [id])
   createAt       DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
