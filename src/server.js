@@ -11,10 +11,12 @@ const PORT = process.env.PORT;
 const apollo = new ApolloServer({
   resolvers,
   typeDefs,
+  playground: true,
   context: async ({ req }) => {
     return { loggedInUser: await getUser(req.headers.token), protectResolver };
   },
   // GraphQLPlayground 를 바로 사용하기 위함
+
   plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
 });
 
