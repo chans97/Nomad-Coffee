@@ -11,6 +11,7 @@ const PORT = process.env.PORT;
 const apollo = new ApolloServer({
   resolvers,
   typeDefs,
+  // playground,introspection it's only for deploy-test
   playground: true,
   introspection: true,
   context: async ({ req }) => {
